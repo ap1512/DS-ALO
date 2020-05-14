@@ -1,35 +1,40 @@
-
 class Segtree:
-    def __init__(self, iterable, func,identity):
-        self.ar = [];
-        self.identity=identity;
-        self.func = func;
+    def __init__(self, iterable, __func, __identity):
+        self.__ar = [];
+        self.__identity = __identity;
+        self.__func = __func;
         iterator = iter(iterable);
         while True:
             try:
-                self.ar.append(next(iterator));
+                self.__ar.append(next(iterator));
             except StopIteration:
                 break;
-        self.segtree = [None] * 4 * len(self.ar);
-        self.build(self.ar, 0, len(self.ar) - 1, 0)
+        self.__segtree = [None] * 4 * len(self.__ar);
+        self.__build(self.__ar, 0, len(self.__ar) - 1, 0)
+
+    def __left_pos(self, pos):
+        return 2 * pos + 1;
+
+    def __right_pos(self, pos):
+        return 2 * pos + 2;
 
     def __build(self, A, low, high, pos):
         if low == high:
-            self.segtree[pos] = A[low];
+            self.__segtree[pos] = A[low];
             return;
         mid = (low + high) // 2;
-        self.build(A, low, mid, 2 * pos + 1);
-        self.build(A, mid + 1, high, 2 * pos + 2);
-        self.segtree[pos] = self.func(self.segtree[2 * pos + 1], self.segtree[2 * pos + 2]);
-    def query(self,Qs,Qe,pos=0,Ns=0,Ne=None):
-        if Ne==None:
-            Ne=len(self.ar)-1;
-        if Qs<=Ns and Qe>=Ne:
-            return self.segtree[pos];
-        if Ne<Qs or Ns>Qe:
-            return self.identity;
-        mid=(Ns+Ne)//2;
-        left=self.query(Qs,Qe,2*pos+1,Ns,mid);
-        right=self.query(Qs,Qe,2*pos+2,mid+1,Ne);
-        return left+right;
-    
+        self.__build(A, low, mid, self.__left_pos(pos));
+        self.__build(A, mid + 1, high, self.__right_pos(pos));
+        self.__segtree[pos] = self.__func(self.__segtree[self.__left_pos(pos)], self.__segtree[self.__right_pos(pos)]);
+
+    def query(self, Qs, Qe, pos=0, Ns=0, Ne=None):
+        if Ne == None:
+            Ne = len(self.__ar) - 1;
+        if Qs <= Ns and Qe >= Ne:
+            return self.__segtree[pos];
+        if Ne < Qs or Ns > Qe:
+            return self.__identity;
+        mid = (Ns + Ne) // 2;
+        left = self.query(Qs, Qe, self.__left_pos(pos), Ns, mid);
+        right = self.query(Qs, Qe, self.__right_pos(pos), mid + 1, Ne);
+        return left + right;
