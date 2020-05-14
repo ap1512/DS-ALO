@@ -1,0 +1,48 @@
+import math;
+
+
+class Segtree:
+    def __init__(self, iterable, func,identity):
+        self.ar = [];
+        self.identity=identity;
+        self.func = func;
+        iterator = iter(iterable);
+        while True:
+            try:
+                self.ar.append(next(iterator));
+            except StopIteration:
+                break;
+        self.segtree = [None] * 4 * len(self.ar);
+        self.build(self.ar, 0, len(self.ar) - 1, 0)
+
+    def build(self, A, low, high, pos):
+        if low == high:
+            self.segtree[pos] = A[low];
+            return;
+        mid = (low + high) // 2;
+        self.build(A, low, mid, 2 * pos + 1);
+        self.build(A, mid + 1, high, 2 * pos + 2);
+        self.segtree[pos] = self.func(self.segtree[2 * pos + 1], self.segtree[2 * pos + 2]);
+    def query(self,Qs,Qe,pos,Ns=0,Ne=None):
+        if Ne==None:
+            Ne=len(self.ar)-1;
+        if Qs<=Ns and Qe>=Ne:
+            return self.segtree[pos];
+        if Ne<Qs or Ns>Qe:
+            return self.identity;
+        mid=(Ns+Ne)//2;
+        left=self.query(Qs,Qe,2*pos+1,Ns,mid);
+        right=self.query(Qs,Qe,2*pos+2,mid+1,Ne);
+        return left+right;
+    def
+
+A = [1,2,3,4,5,6];
+
+
+def add(a, b):
+    return a + b;
+
+
+s = Segtree(A, add,0);
+print(s.segtree);
+print(s.query(1,4,0));
