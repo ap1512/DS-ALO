@@ -37,4 +37,18 @@ class Segtree:
         mid = (Ns + Ne) // 2;
         left = self.query(Qs, Qe, self.__left_pos(pos), Ns, mid);
         right = self.query(Qs, Qe, self.__right_pos(pos), mid + 1, Ne);
-        return left + right;
+        return self.__func(left,right);
+    def update(self,index,newval,pos=0,Ns=0,Ne=None):
+        if pos==0:
+            self.__ar[index]=newval;
+        if Ne==None:
+            Ne=len(self.__ar)-1;
+        if index<Ns or index>Ne:
+            return ;
+        if Ns==Ne:
+            self.__segtree[pos]=newval;
+            return ;
+        mid=(Ns+Ne)//2;
+        self.update(index,newval,self.__left_pos(pos),Ns,mid);
+        self.update(index,newval,self.__right_pos(pos),mid+1,Ne);
+        self.__segtree[pos]=self.__func(self.__segtree[self.__left_pos(pos)], self.__segtree[self.__right_pos(pos)]);
